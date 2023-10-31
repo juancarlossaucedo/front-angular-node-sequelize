@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Product } from 'src/app/interfaces/product';
-import { ProductService } from 'src/app/services/product.service';
+import { Usuario } from 'src/app/interfaces/product';
+import { UsuarioService } from 'src/app/services/product.service';
 
 @Component({
   selector: 'app-add-edit-product',
@@ -17,15 +17,14 @@ export class AddEditProductComponent implements OnInit {
   operacion: string = 'Agregar ';
 
   constructor(private fb: FormBuilder,
-    private _productService: ProductService,
+    private _usuarioService: UsuarioService,
     private router: Router,
     private toastr: ToastrService,
     private aRouter: ActivatedRoute) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      price: [null, Validators.required],
-      stock: [null, Validators.required],
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      email: ['', Validators.required],
     })
     this.id = Number(aRouter.snapshot.paramMap.get('id'));
   }
@@ -41,13 +40,12 @@ export class AddEditProductComponent implements OnInit {
 
   getProduct(id: number) {
     this.loading = true;
-    this._productService.getProduct(id).subscribe((data: Product) => {
+    this._usuarioService.getProduct(id).subscribe((data: Usuario) => {
       this.loading = false;
       this.form.setValue({
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        stock: data.stock
+        nombres: data.nombres,
+        apellidos: data.apellidos,
+        email: data.email
       })
     })
   }
@@ -56,27 +54,28 @@ export class AddEditProductComponent implements OnInit {
     /*  console.log(this.form.value.name);
      console.log(this.form.get('name')?.value); */
 
-    const product: Product = {
-      name: this.form.value.name,
-      description: this.form.value.description,
-      price: this.form.value.price,
-      stock: this.form.value.stock
-    }
+     const product: Usuario = {
+      idCliente: this.id, // Esto podría ser undefined si es un nuevo producto
+      nombres: this.form.value.nombres,
+      apellidos: this.form.value.apellidos,
+      email: this.form.value.email,
+  };
+  
     this.loading = true;
 
     if (this.id !== 0) {
-      // Es editar 
-      product.id = this.id;
-      this._productService.updateProduct(this.id, product).subscribe(() => {
-        this.toastr.info(`El producto ${product.name} fue actualizado con exito`, 'Producto actualizado');
+      // Es editar
+      product.idCliente = this.id;
+      this._usuarioService.updateProduct(this.id, product).subscribe(() => {
+        this.toastr.info(`El producto ${product.nombres} fue actualizado con exito`, 'Usuario actualizado');
         this.loading = false;
         this.router.navigate(['/']);
       })
 
     } else {
       // Es agregagar
-      this._productService.saveProduct(product).subscribe(() => {
-        this.toastr.success(`El producto ${product.name} fue registrado con exito`, 'Producto registrado');
+      this._usuarioService.saveProduct(product).subscribe(() => {
+        this.toastr.success(`El producto ${product.nombres} fue registrado con exito`, 'Usuario registrado');
         this.loading = false;
         this.router.navigate(['/']);
       })

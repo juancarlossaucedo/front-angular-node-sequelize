@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Product } from 'src/app/interfaces/product';
-import { ProductService } from 'src/app/services/product.service';
+import { Usuario } from 'src/app/interfaces/product';
+import { UsuarioService } from 'src/app/services/product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-products',
@@ -9,10 +10,10 @@ import { ProductService } from 'src/app/services/product.service';
   styleUrls: ['./list-products.component.css']
 })
 export class ListProductsComponent implements OnInit {
-  listProducts: Product[] = []
+  listProducts: Usuario[] = []
   loading: boolean = false;
 
-  constructor(private _productService: ProductService, private toastr: ToastrService) { }
+  constructor(private _usuarioService: UsuarioService, private toastr: ToastrService, private router: Router) { }
 
   ngOnInit(): void {
     this.getListProducts();
@@ -21,17 +22,37 @@ export class ListProductsComponent implements OnInit {
   getListProducts() {
     this.loading = true;
 
-    this._productService.getListProducts().subscribe((data: Product[]) => {
+    this._usuarioService.getListProducts().subscribe((data: Usuario[]) => {
       this.listProducts = data;
       this.loading = false;
     })
   }
 
+  editProduct(id: number | undefined) {
+    if (id !== undefined) {
+      this.router.navigate(['/edit', id]);
+    } else {
+      console.error('ID indefinido. No se puede navegar a la página de edición.');
+    }
+  }
+
   deleteProduct(id: number) {
     this.loading = true;
-    this._productService.deleteProduct(id).subscribe(() => {
+    this._usuarioService.deleteProduct(id).subscribe(() => {
       this.getListProducts();
-      this.toastr.warning('El producto fue eliminado con exito', 'Producto eliminado');
+      this.toastr.warning('El Usuario fue eliminado con exito');
     })
   }
+
+  /*eliminarCliente(id: number) {
+    if (id !== undefined) {
+      this._usuarioService.deleteProduct(id).subscribe((response) => {
+        console.log('Cliente eliminado:', response);
+        // Vuelve a cargar la lista de clientes después de eliminar uno
+        this.getListProducts();
+      });
+    } else {
+      this.toastr.warning('El Usuario fue eliminado con exito');
+    }
+  }*/
 }

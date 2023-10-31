@@ -2,37 +2,42 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Product } from '../interfaces/product';
+import { Usuario } from '../interfaces/product';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class UsuarioService {
   private myAppUrl: string;
   private myApiUrl: string;
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient) {
     this.myAppUrl = environment.endpoint;
-    this.myApiUrl = 'api/productos/'
+    this.myApiUrl = 'usuarios';
   }
 
-  getListProducts(): Observable<Product[]> {
-   return this.http.get<Product[]>(`${this.myAppUrl}${this.myApiUrl}`);
+  getListProducts(): Observable<Usuario[]> {
+   return this.http.get<Usuario[]>(`${this.myAppUrl}${this.myApiUrl}/listar`); // Actualiza la URL para listar
   }
 
   deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}${id}`)
+    console.log(id);
+    return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}/eliminar/${id}`); // Actualiza la URL para eliminar
   }
 
-  saveProduct(product: Product): Observable<void> {
-    return this.http.post<void>(`${this.myAppUrl}${this.myApiUrl}`,product)
+  saveProduct(usuario: Usuario): Observable<void> {
+    return this.http.post<void>(`${this.myAppUrl}${this.myApiUrl}/guardar`, usuario); // Actualiza la URL para crear
   }
 
-  getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.myAppUrl}${this.myApiUrl}${id}`)
+  getProduct(id: number): Observable<Usuario> {
+    console.log(id);
+    return this.http.get<Usuario>(`${this.myAppUrl}${this.myApiUrl}/editar/${id}`); // Actualiza la URL para editar
   }
 
-  updateProduct(id: number, product: Product): Observable<void> {
-    return this.http.put<void>(`${this.myAppUrl}${this.myApiUrl}${id}`, product);
-  }
+  updateProduct(id: number, usuario: any): Observable<any> {
+    console.log(usuario);
+    return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}/editar/${id}`, usuario); // Actualiza la URL para editar
+}
+
+
 }
